@@ -1,0 +1,38 @@
+{
+  "name": "my-webpack-project",
+  "version": "1.0.0",
+  "description": "My webpack project",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nikitatopodin/CRUD-api.git"
+  },
+  "author": "Nikitatopodin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nikitatopodin/CRUD-api/issues"
+  },
+  "homepage": "https://github.com/Nikitatopodin/CRUD-api#readme",
+  "devDependencies": {
+    "@webpack-cli/generators": "^3.0.7",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.1",
+    "prettier": "^3.2.5",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "uuid": "^9.0.1",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
