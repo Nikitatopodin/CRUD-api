@@ -2,10 +2,13 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
+    "module": "NodeNext",
+    "target": "es2020",
     "allowJs": true,
     "esModuleInterop": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "NodeNext"
   },
   "files": [
     "src/index.ts"
