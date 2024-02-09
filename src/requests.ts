@@ -1,62 +1,83 @@
 import { v4 as uuidv4 } from 'uuid';
-
-let users = [
-    {
-        id: '1',
-        username: 'Oleg',
-        age: 20,
-        hobbies: ['coding', 'sport', 'kek']
-    },
-    {
-        id: '2',
-        username: 'Omega',
-        age: Infinity,
-        hobbies: ['life ending']
-    }
+import { checkUserExistance, validateId, validateReqBody } from './utils.ts';
+import { IUser } from './types.ts';
+let users: IUser[] = [
+  {
+    id: '1',
+    username: 'Oleg',
+    age: 20,
+    hobbies: ['coding', 'sport', 'kek']
+  },
+  {
+    id: '2',
+    username: 'Omega',
+    age: Infinity,
+    hobbies: ['life ending']
+  }
 ]
 
 const getUsers = async (req: any, res: any) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(users));
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(users));
 }
 
 const getUserById = async (req: any, res: any, id: string) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(users.filter((user) => user.id === id)));
+  if (!validateId(res, id)) return;
+  const response = checkUserExistance(id, users);
+  const statusCode = Array.isArray(response) ? 200 : 404;
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(response));
 }
 
 const createUser = async (req: any, res: any) => {
-    let body = '';
-    req.on('data', (chunk: Buffer) => body += chunk.toString());
-    req.on('end', () => {
-        const userObj = JSON.parse(body);
-        const user = { id: uuidv4(), ...userObj }
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(user));
-        users.push(user);
-    })
+  let body = '';
+  req.on('data', (chunk: Buffer) => body += chunk.toString());
+  req.on('end', () => {
+    const userObj = JSON.parse(body);
+    const response = validateReqBody(userObj);
+    const statusCode = response.length === 0 ? 201 : 400;
+    const user = { id: uuidv4(), ...userObj }
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(statusCode === 201 ? user : response));
+    if (statusCode === 201) {
+      users.push(user);
+    }
+  })
 }
 
 const updateUserById = async (req: any, res: any, id: string) => {
-    let body = '';
-    req.on('data', (chunk: Buffer) => body += chunk.toString());
-    req.on('end', () => {
-        const userObj = { id, ...JSON.parse(body) };
-        users = users.map((user) => {
-            if (user.id === id) {
-                return userObj;
-            }
-            return user;
-        })
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(userObj));
+  if (!validateId(res, id)) return;
+  const userExistanceResponse = checkUserExistance(id, users);
+  let statusCode = Array.isArray(userExistanceResponse) ? 200 : 404;
+  if (statusCode === 404) {
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(userExistanceResponse));
+    return;
+  }
+  let body = '';
+  req.on('data', (chunk: Buffer) => body += chunk.toString());
+  req.on('end', () => {
+    const userObj: IUser = { id, ...JSON.parse(body) };
+    const reqBodyValidationResponse = validateReqBody(userObj);
+    statusCode = reqBodyValidationResponse.length === 0 ? 200 : 400;
+    users = users.map((user) => {
+      if (user.id === id) {
+        return userObj;
+      }
+      return user;
     })
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(statusCode === 200 ? userObj : reqBodyValidationResponse));
+  })
 }
 
 const deleteUserById = async (req: any, res: any, id: string) => {
-    users = users.filter((user) => user.id !== id);
-    res.writeHead(204, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(users));
+  if (!validateId(res, id)) return;
+  const response = checkUserExistance(id, users);
+  const statusCode = Array.isArray(response) ? 200 : 404;
+  users = users.filter((user) => user.id !== id);
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(statusCode === 200 ? users : response));
 }
 
 export { getUsers, getUserById, createUser, deleteUserById, updateUserById };
