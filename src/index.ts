@@ -1,5 +1,8 @@
+import 'dotenv/config.js';
 import http from 'node:http';
 import { getUserById, getUsers, createUser, deleteUserById, updateUserById } from './requests.ts';
+
+const PORT = process.env.PORT;
 
 const server = http.createServer((req, res) => {
   switch (true) {
@@ -25,7 +28,6 @@ const server = http.createServer((req, res) => {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Invalid request' }));
   }
-
 });
 
-server.listen(8000);
+server.listen(PORT);
