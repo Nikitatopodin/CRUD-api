@@ -35,14 +35,20 @@ const createUser = async (req: IncomingMessage, res: ServerResponse) => {
   let body = '';
   req.on('data', (chunk: Buffer) => body += chunk.toString());
   req.on('end', () => {
-    const userObj = JSON.parse(body);
-    const response = validateReqBody(userObj);
-    const statusCode = response.length === 0 ? 201 : 400;
-    const user = { id: uuidv4(), ...userObj }
-    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(statusCode === 201 ? user : response));
-    if (statusCode === 201) {
-      users.push(user);
+    try {
+      const userObj = JSON.parse(body);
+      const response = validateReqBody(userObj);
+      console.log(response);
+      const statusCode = response.length === 0 ? 201 : 400;
+      const user = { id: uuidv4(), ...userObj }
+      res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(statusCode === 201 ? user : response));
+      if (statusCode === 201) {
+        users.push(user);
+      }
+    } catch {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: "Request body is not valid" }));
     }
   })
 }
