@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { checkUserExistance, validateId, validateReqBody } from './utils.ts';
 import { IUser } from './types.ts';
+import type { ServerResponse, IncomingMessage } from 'node:http';
+
 let users: IUser[] = [
   {
     id: '1',
@@ -16,12 +18,12 @@ let users: IUser[] = [
   }
 ]
 
-const getUsers = async (req: any, res: any) => {
+const getUsers = async (res: ServerResponse) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(users));
 }
 
-const getUserById = async (req: any, res: any, id: string) => {
+const getUserById = async (res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const response = checkUserExistance(id, users);
   const statusCode = Array.isArray(response) ? 200 : 404;
@@ -29,7 +31,7 @@ const getUserById = async (req: any, res: any, id: string) => {
   res.end(JSON.stringify(response));
 }
 
-const createUser = async (req: any, res: any) => {
+const createUser = async (req: IncomingMessage, res: ServerResponse) => {
   let body = '';
   req.on('data', (chunk: Buffer) => body += chunk.toString());
   req.on('end', () => {
@@ -45,7 +47,7 @@ const createUser = async (req: any, res: any) => {
   })
 }
 
-const updateUserById = async (req: any, res: any, id: string) => {
+const updateUserById = async (req: IncomingMessage, res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const userExistanceResponse = checkUserExistance(id, users);
   let statusCode = Array.isArray(userExistanceResponse) ? 200 : 404;
@@ -71,7 +73,7 @@ const updateUserById = async (req: any, res: any, id: string) => {
   })
 }
 
-const deleteUserById = async (req: any, res: any, id: string) => {
+const deleteUserById = async (res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const response = checkUserExistance(id, users);
   const statusCode = Array.isArray(response) ? 200 : 404;

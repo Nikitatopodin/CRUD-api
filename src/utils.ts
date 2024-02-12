@@ -1,11 +1,12 @@
 import { validate } from "uuid";
 import { IUser } from './types.ts';
+import type { ServerResponse } from 'node:http';
 
 const invalidUserIdErrMsg = { message: 'User ID is not valid' };
 const userNotExistErrMsg = { message: "User with provided ID doesn't exist" };
 const missingRequiredFieldsErrMsg = { message: "Request body doesn't contain following required field(s): " }
 
-const validateId = (res: any, id: string) => {
+const validateId = (res: ServerResponse, id: string) => {
   if (!validate(id)) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(invalidUserIdErrMsg));
