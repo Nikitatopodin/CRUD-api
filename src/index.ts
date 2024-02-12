@@ -1,13 +1,33 @@
-// import http from 'node:http';
+import 'dotenv/config.js';
+import http from 'node:http';
+import { getUserById, getUsers, createUser, deleteUserById, updateUserById } from './requests.ts';
 
-// const server = http.createServer((req, res) => {
-//   switch (true) {
-//     case (req.url === 'api/users' && req.method === 'GET'):
-//       res.writeHead(200, { 'Content-Type': 'application/json' });
-//       res.end('Hello World!');
-//     case: (req.url === 'api')
-//   }
+const PORT = process.env.PORT || 8000;
 
-// });
+const server = http.createServer((req, res) => {
+  switch (true) {
+    case (req.url === '/api/users' && req.method === 'GET'):
+      getUsers(res);
+      break;
+    case (req.url.match(/api\/users\/[0-9a-fA-F]+/) && req.method === 'GET'):
+      const getUrlArr = req.url.split('/');
+      getUserById(res, getUrlArr[getUrlArr.length - 1]);
+      break;
+    case (req.url === '/api/users' && req.method === 'POST'):
+      createUser(req, res);
+      break;
+    case (req.url.match(/api\/users\/[0-9a-fA-F]+/) && req.method === 'PUT'):
+      const putUrlArr = req.url.split('/');
+      updateUserById(req, res, putUrlArr[putUrlArr.length - 1]);
+      break;
+    case (req.url.match(/api\/users\/[0-9a-fA-F]+/) && req.method === 'DELETE'):
+      const deleteUrlArr = req.url.split('/');
+      deleteUserById(res, deleteUrlArr[deleteUrlArr.length - 1]);
+      break;
+    default:
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Invalid request' }));
+  }
+});
 
-// server.listen(8000);
+server.listen(PORT);
