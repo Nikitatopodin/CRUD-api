@@ -3,20 +3,7 @@ import { checkUserExistance, validateId, validateReqBody } from './utils.ts';
 import { IUser } from './types.ts';
 import type { ServerResponse, IncomingMessage } from 'node:http';
 
-let users: IUser[] = [
-  {
-    id: '1',
-    username: 'Oleg',
-    age: 20,
-    hobbies: ['coding', 'sport', 'kek']
-  },
-  {
-    id: '2',
-    username: 'Omega',
-    age: Infinity,
-    hobbies: ['life ending']
-  }
-]
+let users: IUser[] = [];
 
 const getUsers = async (res: ServerResponse) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
