@@ -1,19 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
-import { checkUserExistance, validateId, validateReqBody } from './utils.ts';
-import { IUser } from './types.ts';
+import { checkUserExistance, isReponseError, validateId, validateReqBody } from './utils.ts';
+import { IUser, statusCodes } from './types.ts';
 import type { ServerResponse, IncomingMessage } from 'node:http';
 
 let users: IUser[] = [];
 
 const getUsers = async (res: ServerResponse) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.writeHead(statusCodes.OK, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(users));
 }
 
 const getUserById = async (res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const response = checkUserExistance(id, users);
-  const statusCode = Array.isArray(response) ? 200 : 404;
+  const statusCode = Array.isArray(response) ? statusCodes.OK : statusCodes.NOT_FOUND;
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(response));
 }
@@ -25,16 +25,15 @@ const createUser = async (req: IncomingMessage, res: ServerResponse) => {
     try {
       const userObj = JSON.parse(body);
       const response = validateReqBody(userObj);
-      console.log(response);
-      const statusCode = response.length === 0 ? 201 : 400;
+      const statusCode = response.length === 0 ? statusCodes.CREATED : statusCodes.BAD_REQUEST;
       const user = { id: uuidv4(), ...userObj }
       res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(statusCode === 201 ? user : response));
+      res.end(JSON.stringify(statusCode === statusCodes.CREATED ? user : response));
       if (statusCode === 201) {
         users.push(user);
       }
     } catch {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.writeHead(statusCodes.BAD_REQUEST, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: "Request body is not valid" }));
     }
   })
@@ -42,11 +41,11 @@ const createUser = async (req: IncomingMessage, res: ServerResponse) => {
 
 const updateUserById = async (req: IncomingMessage, res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
-  const userExistanceResponse = checkUserExistance(id, users);
-  let statusCode = Array.isArray(userExistanceResponse) ? 200 : 404;
-  if (statusCode === 404) {
+  const response = checkUserExistance(id, users);
+  let statusCode = isReponseError(response) ? statusCodes.NOT_FOUND : statusCodes.OK;
+  if (statusCode === statusCodes.NOT_FOUND) {
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(userExistanceResponse));
+    res.end(JSON.stringify(response));
     return;
   }
   let body = '';
@@ -54,7 +53,7 @@ const updateUserById = async (req: IncomingMessage, res: ServerResponse, id: str
   req.on('end', () => {
     const userObj: IUser = { id, ...JSON.parse(body) };
     const reqBodyValidationResponse = validateReqBody(userObj);
-    statusCode = reqBodyValidationResponse.length === 0 ? 200 : 400;
+    statusCode = reqBodyValidationResponse.length === 0 ? statusCodes.OK : statusCodes.BAD_REQUEST;
     users = users.map((user) => {
       if (user.id === id) {
         return userObj;
@@ -62,17 +61,17 @@ const updateUserById = async (req: IncomingMessage, res: ServerResponse, id: str
       return user;
     })
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(statusCode === 200 ? userObj : reqBodyValidationResponse));
+    res.end(JSON.stringify(statusCode === statusCodes.OK ? userObj : reqBodyValidationResponse));
   })
 }
 
 const deleteUserById = async (res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const response = checkUserExistance(id, users);
-  const statusCode = Array.isArray(response) ? 200 : 404;
+  const statusCode = isReponseError(response) ? statusCodes.NOT_FOUND : statusCodes.DELETED;
   users = users.filter((user) => user.id !== id);
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(statusCode === 200 ? users : response));
+  res.end(JSON.stringify(response));
 }
 
 export { getUsers, getUserById, createUser, deleteUserById, updateUserById };
