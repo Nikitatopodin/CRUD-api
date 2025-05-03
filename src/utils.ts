@@ -1,5 +1,5 @@
 import { validate } from "uuid";
-import { errorMessageType, IUser, responseType } from './types.ts';
+import { errorMessageType, IUser, responseType } from './types';
 import type { ServerResponse } from 'node:http';
 
 const errorMessages = {

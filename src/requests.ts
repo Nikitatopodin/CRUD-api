@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { checkUserExistance, isReponseError, validateId, validateReqBody } from './utils.ts';
-import { IUser, statusCodes } from './types.ts';
+import { checkUserExistance, isReponseError, validateId, validateReqBody } from './utils';
+import { IUser, statusCodes } from './types';
 import type { ServerResponse, IncomingMessage } from 'node:http';
 
 let users: IUser[] = [];
