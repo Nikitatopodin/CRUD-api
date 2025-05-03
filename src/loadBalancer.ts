@@ -1,3 +1,4 @@
+import 'dotenv/config.js';
 import cluster, { Worker } from 'node:cluster';
 import { availableParallelism } from 'node:os';
 import server, { currentWorkerId } from './index';
