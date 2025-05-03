@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
-    "start:dev": "npx nodemon src/index.ts",
-    "start:prod": "webpack --mode=production --node-env=production"
+    "start:dev": "nodemon src/index.ts",
+    "start:prod": "tsc && node dist/index.js",
+    "start:multi": "cross-env BALANCER=true nodemon src/loadBalancer.ts"
   },
   "repository": {
     "type": "git",

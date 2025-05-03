@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "module": "NodeNext",
-    "target": "es2020",
-    "allowJs": true,
+    "target": "ES2016",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "strict": true,
     "esModuleInterop": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "moduleResolution": "NodeNext"
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
   },
-  "files": [
-    "src/index.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
