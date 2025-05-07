@@ -13,7 +13,7 @@ const requestHandler = (req: http.IncomingMessage, res: http.ServerResponse) => 
     case (req.url === '/api/users' && req.method === 'GET'):
       getUsers(res);
       break;
-    case (req.url.match(/api\/users\/[0-9a-fA-F]+/) && req.method === 'GET'):
+    case (req.url.match(/^\/api\/users\/.+$/) && req.method === 'GET'):
       const getUrlArr = req.url.split('/');
       getUserById(res, getUrlArr[getUrlArr.length - 1]);
       break;
@@ -34,7 +34,7 @@ const requestHandler = (req: http.IncomingMessage, res: http.ServerResponse) => 
   }
 }
 
-const server = (port: number) => http.createServer(async (req, res) => {
+const createServer = (port: number) => http.createServer(async (req, res) => {
   if (port === 4000 && process.env.BALANCER) {
     currentWorkerId = currentWorkerId  === WORKERS_LENGTH ? 1 :(currentWorkerId + 1)
     
@@ -58,7 +58,7 @@ const server = (port: number) => http.createServer(async (req, res) => {
 })
   .listen(port || PORT)
 
-if (!process.env.BALANCER) server(+PORT)
+if (!process.env.BALANCER && !process.env.TEST) createServer(+PORT)
 
-export default server;
+export default createServer;
 export { currentWorkerId };

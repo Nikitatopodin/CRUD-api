@@ -13,7 +13,7 @@ const getUsers = async (res: ServerResponse) => {
 const getUserById = async (res: ServerResponse, id: string) => {
   if (!validateId(res, id)) return;
   const response = checkUserExistance(id, users);
-  const statusCode = Array.isArray(response) ? statusCodes.OK : statusCodes.NOT_FOUND;
+  const statusCode = isReponseError(response) ? statusCodes.NOT_FOUND : statusCodes.OK;
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(response));
 }
@@ -74,4 +74,4 @@ const deleteUserById = async (res: ServerResponse, id: string) => {
   res.end(JSON.stringify(response));
 }
 
-export { getUsers, getUserById, createUser, deleteUserById, updateUserById };
+export { getUsers, getUserById, createUser, deleteUserById, updateUserById, users };

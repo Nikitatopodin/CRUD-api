@@ -33,4 +33,4 @@ const isReponseError = (response: responseType) => {
   return "message" in response && response.message
 }
 
-export { validateId, checkUserExistance, validateReqBody, isReponseError };
+export { validateId, checkUserExistance, validateReqBody, isReponseError, errorMessages };
