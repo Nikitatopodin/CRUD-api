@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test CRUD api to match snapshot test 1`] = `
+[
+  {
+    "age": 21,
+    "hobbies": [
+      "riding",
+    ],
+    "id": "62860f3a-6950-4d28-ac4a-d7467cde4629",
+    "username": "Helena",
+  },
+  {
+    "age": 25,
+    "hobbies": [
+      "coding, swimming",
+    ],
+    "id": "62860f3a-6950-4d28-ac4f-d7467cde4629",
+    "username": "Nick",
+  },
+  {
+    "age": 28,
+    "hobbies": [
+      "building, bowling",
+    ],
+    "id": "62860f3a-6950-4d28-ac4e-d7467cde4629",
+    "username": "Paul",
+  },
+  {
+    "age": 19,
+    "hobbies": [
+      "plating computer games",
+    ],
+    "id": "62860f3a-6950-4d28-ac4c-d7467cde4629",
+    "username": "Jack",
+  },
+  {
+    "age": 999,
+    "hobbies": [
+      "killing",
+    ],
+    "id": "62860f3a-6950-4d28-ac43-d7467cde4629",
+    "username": "Senna",
+  },
+]
+`;
